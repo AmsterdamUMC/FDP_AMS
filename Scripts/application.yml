@@ -1,1 +1,12 @@
+# application.yml
 
+instance:
+    clientUrl: http://localhost:80 #http://10.3.148.103:80
+    #index: true
+
+# ... other configuration
+
+repository:
+    type: 5
+    blazegraph:
+        url: http://blazegraph:8080/blazegraph  #http://10.3.148.103:8080/blazegraph
