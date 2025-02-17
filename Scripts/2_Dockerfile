@@ -1,1 +1,14 @@
+ Create the Dockerfile
+cat > bootstrap/graph-db-repo-manager/Dockerfile << 'EOF'
+FROM ubuntu:20.04
 
+RUN apt-get update && apt-get install -y \
+    curl \
+    jq \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY create-repositories.sh /create-repositories.sh
+RUN chmod +x /create-repositories.sh
+
+CMD ["/create-repositories.sh"]
+EOF
