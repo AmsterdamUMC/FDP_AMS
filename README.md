@@ -8,3 +8,7 @@ Links that we use for FDP Project :
 4. [Health-RI Metadata Specification](https://github.com/Health-RI/health-ri-metadata)
 5. [To import SHACL Manually via Client UI](https://github.com/Health-RI/health-ri-metadata/issues/99)
 6. [SeMPyRO Data Models and sample notebooks for Data insertion](https://github.com/Health-RI/SeMPyRO)
+
+
+Please see : www.andrea-cloud.com
+![anDREa-logo-kleur](https://github.com/user-attachments/assets/4e8e9b9c-cbef-4b18-a525-7b89a322ff0c)
