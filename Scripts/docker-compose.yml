@@ -59,6 +59,7 @@ services:
     hostname: fdp_client
     environment:
       - FDP_HOST=fdp
+      - INSTANCE_CLIENT_URL=http://localhost:80   # Added this line
     depends_on:
       - fdp
     ports:
