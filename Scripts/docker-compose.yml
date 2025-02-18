@@ -1,30 +1,71 @@
-# docker-compose.yml
+version: '3'
 
- version: '3'
- services:
+services:
+  # GraphDB Service
+  graphdb:
+    image: ontotext/graphdb:10.7.6
+    restart: always
+    hostname: graphdb
+    ports:
+      - 7200:7200
+    volumes:
+      - ./bootstrap/graphdb-data:/opt/graphdb-home
+    networks:
+      - graphdb_net
+    healthcheck:
+      test: "curl -f http://localhost:7200/rest/repositories || exit 1"
+      interval: 15s
+      timeout: 10s
+      retries: 20
 
-     fdp:
-         image: fairdata/fairdatapoint:1.16
-         volumes:
-             - ./application.yml:/fdp/application.yml:ro
+  # GraphDB Repository Manager - Creates required repositories
+  graph_db_repo_manager:
+    build: ./bootstrap/graph-db-repo-manager
+    depends_on:
+      graphdb:
+        condition: service_healthy
+    environment:
+      - "GRAPH_DB_URL=http://graphdb:7200"
+      - "GRAPH_DB_ADMIN_USERNAME=admin"
+      - "GRAPH_DB_ADMIN_PASSWORD=root"
+    networks:
+      - graphdb_net
 
-     fdp-client:
-         image: fairdata/fairdatapoint-client:1.16
-         ports:
-             - 80:80
-         environment:
-             - FDP_HOST=fdp
+  # MongoDB for FDP (Updated Settings)
+  mongo:
+    image: mongo:4.0.12
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo/data:/data/db
+    networks:
+      - default
 
-     mongo:
-         image: mongo:4.0.12
-         ports:
-             - 27017:27017
-         volumes:
-             - ./mongo/data:/data/db
+  # FAIR Data Point (FDP) Server
+  fdp:
+    image: fairdata/fairdatapoint:1.16
+    restart: always
+    depends_on:
+      - mongo
+    networks:
+      - default
+      - graphdb_net
 
-     blazegraph:
-         image: metaphacts/blazegraph-basic:2.2.0-20160908.003514-6
-         ports:
-             - 8080:8080
-         volumes:
-             - ./blazegraph:/blazegraph-data
+  # FAIR Data Point Client
+  fdp_client:
+    image: fairdata/fairdatapoint-client:1.16
+    restart: always
+    hostname: fdp_client
+    environment:
+      - FDP_HOST=fdp
+    depends_on:
+      - fdp
+    ports:
+      - 80:80
+    networks:
+      - default
+
+# Define networks
+networks:
+  graphdb_net:
